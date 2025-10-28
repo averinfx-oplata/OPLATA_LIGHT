@@ -1,0 +1,1 @@
+OPLATA_LIGHT
