@@ -1,10 +1,15 @@
-import { Search, User, Globe, CreditCard, Smartphone, Wifi, Monitor, Users, ShoppingCart, Umbrella, Heart, Book, Gift, Ticket, Sparkles } from 'lucide-react';
+import { Search, User, Globe, CreditCard, Smartphone, Wifi, Monitor, Users, ShoppingCart, Umbrella, Heart, Book, Gift, Ticket, Sparkles, ChevronDown } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useState } from 'react';
+import CreditModal from '../components/CreditModal';
+import LoginModal from '../components/LoginModal';
 
 export default function Home() {
   const navigate = useNavigate();
   const [showCategoryMenu, setShowCategoryMenu] = useState<string | null>(null);
+  const [expandedCategory, setExpandedCategory] = useState<string | null>(null);
+  const [showCreditModal, setShowCreditModal] = useState(false);
+  const [showLoginModal, setShowLoginModal] = useState(false);
 
   const categories = {
     'telefonia-mobila': {
@@ -118,6 +123,7 @@ export default function Home() {
                 <span>Ro</span>
               </button>
               <button
+                onClick={() => setShowLoginModal(true)}
                 className="flex items-center gap-2 px-6 h-10 rounded-xl font-medium transition-all duration-300 ease-out hover:scale-105 active:scale-95 shadow-lg hover:shadow-xl relative overflow-hidden group"
                 style={{
                   background: 'var(--gradient-primary)',
@@ -280,7 +286,7 @@ export default function Home() {
                 CREDIT
               </p>
               <button
-                onClick={() => navigate('/loan-application')}
+                onClick={() => setShowCreditModal(true)}
                 className="px-8 h-11 rounded-xl font-medium border-2 transition-all duration-300 ease-out hover:scale-105 active:scale-95 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-opacity-50 hover:shadow-lg relative overflow-hidden group/btn"
                 style={{
                   background: 'white',
@@ -336,26 +342,49 @@ export default function Home() {
 
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4 mb-4">
             {Object.entries(categories).slice(0, 6).map(([key, category], idx) => (
-              <button
-                key={idx}
-                onClick={() => setShowCategoryMenu(key)}
-                className="group relative rounded-2xl p-6 transition-all duration-300 ease-out hover:scale-105 hover:-translate-y-1 active:scale-95 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-opacity-50 glass-card overflow-hidden"
-              >
-                <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500" style={{
-                  background: 'radial-gradient(circle at center, rgba(0, 174, 239, 0.1) 0%, transparent 70%)'
-                }} />
-                <div className="relative z-10">
-                  <div className={`w-12 h-12 mx-auto mb-3 rounded-xl flex items-center justify-center transition-all duration-300 group-hover:scale-110 group-hover:rotate-6 bg-gradient-to-br ${category.color}`}
-                    style={{
-                      boxShadow: '0 4px 12px rgba(0, 174, 239, 0.2)'
-                    }}>
-                    <category.icon className="w-6 h-6 text-white" />
+              <div key={idx} className="relative">
+                <button
+                  onClick={() => setExpandedCategory(expandedCategory === key ? null : key)}
+                  className={`group relative rounded-2xl p-6 transition-all duration-300 ease-out hover:scale-105 hover:-translate-y-1 active:scale-95 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-opacity-50 glass-card overflow-hidden w-full ${expandedCategory === key ? 'ring-2 ring-blue-400' : ''}`}
+                >
+                  <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500" style={{
+                    background: 'radial-gradient(circle at center, rgba(0, 174, 239, 0.1) 0%, transparent 70%)'
+                  }} />
+                  <div className="relative z-10">
+                    <div className={`w-12 h-12 mx-auto mb-3 rounded-xl flex items-center justify-center transition-all duration-300 group-hover:scale-110 group-hover:rotate-6 bg-gradient-to-br ${category.color}`}
+                      style={{
+                        boxShadow: '0 4px 12px rgba(0, 174, 239, 0.2)'
+                      }}>
+                      <category.icon className="w-6 h-6 text-white" />
+                    </div>
+                    <p className="text-xs font-medium text-center transition-colors duration-300 group-hover:text-blue-600" style={{ color: 'var(--text)', lineHeight: '1.4' }}>
+                      {category.name}
+                    </p>
+                    <ChevronDown className={`w-4 h-4 mx-auto mt-2 transition-transform duration-300 ${expandedCategory === key ? 'rotate-180' : ''}`} style={{ color: 'var(--color-primary)' }} />
                   </div>
-                  <p className="text-xs font-medium text-center transition-colors duration-300 group-hover:text-blue-600" style={{ color: 'var(--text)', lineHeight: '1.4' }}>
-                    {category.name}
-                  </p>
-                </div>
-              </button>
+                </button>
+                {expandedCategory === key && (
+                  <div className="absolute top-full left-0 right-0 mt-2 z-20 animate-in">
+                    <div className="glass-card rounded-2xl p-4 space-y-2 shadow-xl" style={{
+                      background: 'white',
+                      border: '1px solid rgba(0, 174, 239, 0.2)'
+                    }}>
+                      {category.services.map((service, serviceIdx) => (
+                        <button
+                          key={serviceIdx}
+                          onClick={() => {
+                            navigate(`/service/${service.toLowerCase().replace(/\s+/g, '-')}`);
+                            setExpandedCategory(null);
+                          }}
+                          className="w-full p-3 rounded-xl hover:bg-gradient-to-r hover:from-blue-50 hover:to-cyan-50 transition-all duration-300 text-left"
+                        >
+                          <span className="font-semibold text-sm" style={{ color: 'var(--text-strong)' }}>{service}</span>
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </div>
             ))}
           </div>
 
@@ -392,49 +421,8 @@ export default function Home() {
         </section>
       </main>
 
-      {showCategoryMenu && (
-        <div
-          className="fixed inset-0 bg-black/30 backdrop-blur-sm z-50 animate-in"
-          onClick={() => setShowCategoryMenu(null)}
-        >
-          <div
-            className="fixed right-0 top-0 h-full w-96 glass-card border-l border-white/20 shadow-2xl animate-slide-in-right overflow-y-auto"
-            onClick={(e) => e.stopPropagation()}
-            style={{
-              background: 'rgba(255, 255, 255, 0.95)',
-              backdropFilter: 'blur(20px)'
-            }}
-          >
-            <div className="p-6">
-              <div className="flex items-center justify-between mb-6">
-                <h3 className="text-xl font-semibold" style={{ color: 'var(--text-strong)' }}>
-                  {categories[showCategoryMenu as keyof typeof categories].name}
-                </h3>
-                <button
-                  onClick={() => setShowCategoryMenu(null)}
-                  className="w-8 h-8 rounded-lg hover:bg-gray-100 transition-colors flex items-center justify-center"
-                >
-                  <span className="text-2xl text-gray-500">&times;</span>
-                </button>
-              </div>
-              <div className="space-y-3">
-                {categories[showCategoryMenu as keyof typeof categories].services.map((service, idx) => (
-                  <button
-                    key={idx}
-                    onClick={() => {
-                      navigate(`/service/${service.toLowerCase().replace(/\s+/g, '-')}`);
-                      setShowCategoryMenu(null);
-                    }}
-                    className="w-full p-4 rounded-xl glass-card hover:scale-105 transition-all duration-300 text-left"
-                  >
-                    <span className="font-semibold" style={{ color: 'var(--text-strong)' }}>{service}</span>
-                  </button>
-                ))}
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
+      <CreditModal isOpen={showCreditModal} onClose={() => setShowCreditModal(false)} />
+      <LoginModal isOpen={showLoginModal} onClose={() => setShowLoginModal(false)} />
 
       <footer className="border-t mt-16 relative" style={{ borderColor: 'rgba(255, 255, 255, 0.5)' }}>
         <div className="absolute inset-0 backdrop-blur-xl bg-white/60" />
