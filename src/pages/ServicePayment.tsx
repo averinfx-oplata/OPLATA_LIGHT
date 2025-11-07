@@ -1,5 +1,5 @@
 import { Link, useParams } from 'react-router-dom';
-import { Globe, User, ArrowLeft, Smartphone, Zap, Wifi, X } from 'lucide-react';
+import { Globe, User, ArrowLeft, Smartphone, Zap, Wifi, X, ChevronDown } from 'lucide-react';
 import { useState } from 'react';
 
 interface ServiceConfig {
@@ -157,40 +157,10 @@ function ConfirmationModal({ isOpen, onClose, onConfirm, formData, serviceName, 
           Confirmați plata
         </h2>
         <p className="mb-6" style={{ color: 'var(--text-muted)' }}>
-          Verificați datele înainte de a continua
+          Suma totală: <span className="font-bold" style={{ color: 'var(--color-primary)' }}>{amount} MDL</span>
         </p>
 
         <form onSubmit={handleSubmit} className="space-y-6">
-          <div className="glass-card rounded-xl p-4 space-y-3" style={{
-            background: 'rgba(0, 174, 239, 0.05)',
-            border: '1px solid rgba(0, 174, 239, 0.1)'
-          }}>
-            <h3 className="font-semibold mb-3" style={{ color: 'var(--text-strong)' }}>
-              Detalii plată
-            </h3>
-            <div className="flex justify-between items-center">
-              <span className="text-sm" style={{ color: 'var(--text-muted)' }}>Serviciu</span>
-              <span className="font-semibold" style={{ color: 'var(--text-strong)' }}>{serviceName}</span>
-            </div>
-            {Object.entries(formData).map(([key, value]) => {
-              if (key === 'amount' || !value) return null;
-              return (
-                <div key={key} className="flex justify-between items-center">
-                  <span className="text-sm" style={{ color: 'var(--text-muted)' }}>
-                    {key === 'phone' ? 'Telefon' : key === 'contract' ? 'Contract' : key === 'clientCode' ? 'Cod client' : key === 'clientId' ? 'ID client' : key}
-                  </span>
-                  <span className="font-semibold" style={{ color: 'var(--text-strong)' }}>{value}</span>
-                </div>
-              );
-            })}
-            <div className="border-t pt-3 mt-3" style={{ borderColor: 'rgba(0, 174, 239, 0.1)' }}>
-              <div className="flex justify-between items-center">
-                <span className="font-semibold" style={{ color: 'var(--text-strong)' }}>Suma totală</span>
-                <span className="text-xl font-bold" style={{ color: 'var(--color-primary)' }}>{amount} MDL</span>
-              </div>
-            </div>
-          </div>
-
           <div>
             <label className="block text-sm font-medium mb-2" style={{ color: 'var(--text-strong)' }}>
               Email pentru confirmare *
@@ -220,7 +190,6 @@ function ConfirmationModal({ isOpen, onClose, onConfirm, formData, serviceName, 
               <a href="#" className="text-[var(--color-primary)] hover:underline font-medium">
                 politica de confidențialitate
               </a>
-              {' '}și confirm corectitudinea datelor introduse
             </label>
           </div>
 
@@ -249,6 +218,7 @@ export default function ServicePayment() {
 
   const [formData, setFormData] = useState<Record<string, string>>({});
   const [showConfirmation, setShowConfirmation] = useState(false);
+  const [expandedFaq, setExpandedFaq] = useState<number | null>(null);
 
   const handleInputChange = (fieldName: string, value: string) => {
     setFormData(prev => ({ ...prev, [fieldName]: value }));
@@ -469,15 +439,37 @@ export default function ServicePayment() {
           <h3 className="text-xl font-semibold mb-4" style={{ color: 'var(--text-strong)' }}>
             Întrebări frecvente
           </h3>
-          <div className="space-y-4">
+          <div className="space-y-3">
             {config.faq.map((item, index) => (
-              <div key={index}>
-                <h4 className="font-medium mb-2" style={{ color: 'var(--text-strong)' }}>
-                  {item.question}
-                </h4>
-                <p className="text-sm" style={{ color: 'var(--text-muted)' }}>
-                  {item.answer}
-                </p>
+              <div key={index} className="rounded-xl border transition-all duration-300" style={{
+                borderColor: expandedFaq === index ? 'rgba(0, 174, 239, 0.3)' : 'rgba(255, 255, 255, 0.8)',
+                background: expandedFaq === index ? 'rgba(0, 174, 239, 0.05)' : 'transparent'
+              }}>
+                <button
+                  onClick={() => setExpandedFaq(expandedFaq === index ? null : index)}
+                  className="w-full flex items-center justify-between p-4 transition-colors duration-300 hover:bg-opacity-60"
+                  style={{
+                    background: expandedFaq === index ? 'rgba(0, 174, 239, 0.08)' : 'transparent'
+                  }}
+                >
+                  <h4 className="font-medium text-left" style={{ color: 'var(--text-strong)' }}>
+                    {item.question}
+                  </h4>
+                  <ChevronDown
+                    className="w-5 h-5 transition-transform duration-300 flex-shrink-0"
+                    style={{
+                      color: 'var(--color-primary)',
+                      transform: expandedFaq === index ? 'rotate(180deg)' : 'rotate(0deg)'
+                    }}
+                  />
+                </button>
+                {expandedFaq === index && (
+                  <div className="px-4 pb-4 border-t" style={{ borderColor: 'rgba(0, 174, 239, 0.1)' }}>
+                    <p className="text-sm mt-3" style={{ color: 'var(--text-muted)' }}>
+                      {item.answer}
+                    </p>
+                  </div>
+                )}
               </div>
             ))}
           </div>
