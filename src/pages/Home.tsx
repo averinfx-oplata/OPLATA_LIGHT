@@ -340,12 +340,13 @@ export default function Home() {
             Categorii
           </h2>
 
-          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4 mb-4">
-            {Object.entries(categories).slice(0, 6).map(([key, category], idx) => (
-              <div key={idx} className="relative">
+          <div className="space-y-2">
+            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4">
+              {Object.entries(categories).slice(0, 6).map(([key, category], idx) => (
                 <button
+                  key={idx}
                   onClick={() => setExpandedCategory(expandedCategory === key ? null : key)}
-                  className={`group relative rounded-2xl p-6 transition-all duration-300 ease-out hover:scale-105 hover:-translate-y-1 active:scale-95 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-opacity-50 glass-card overflow-hidden w-full ${expandedCategory === key ? 'ring-2 ring-blue-400' : ''}`}
+                  className={`group relative rounded-2xl p-6 transition-all duration-300 ease-out hover:scale-105 hover:-translate-y-1 active:scale-95 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-opacity-50 glass-card overflow-hidden ${expandedCategory === key ? 'ring-2 ring-blue-400' : ''}`}
                 >
                   <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500" style={{
                     background: 'radial-gradient(circle at center, rgba(0, 174, 239, 0.1) 0%, transparent 70%)'
@@ -363,60 +364,71 @@ export default function Home() {
                     <ChevronDown className={`w-4 h-4 mx-auto mt-2 transition-transform duration-300 ${expandedCategory === key ? 'rotate-180' : ''}`} style={{ color: 'var(--color-primary)' }} />
                   </div>
                 </button>
-                {expandedCategory === key && (
-                  <div className="absolute top-full left-0 right-0 mt-2 z-20 animate-in">
-                    <div className="glass-card rounded-2xl p-4 space-y-2 shadow-xl" style={{
-                      background: 'white',
-                      border: '1px solid rgba(0, 174, 239, 0.2)'
-                    }}>
-                      {category.services.map((service, serviceIdx) => (
-                        <button
-                          key={serviceIdx}
-                          onClick={() => {
-                            navigate(`/service/${service.toLowerCase().replace(/\s+/g, '-')}`);
-                            setExpandedCategory(null);
-                          }}
-                          className="w-full p-3 rounded-xl hover:bg-gradient-to-r hover:from-blue-50 hover:to-cyan-50 transition-all duration-300 text-left"
-                        >
-                          <span className="font-semibold text-sm" style={{ color: 'var(--text-strong)' }}>{service}</span>
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-                )}
-              </div>
-            ))}
-          </div>
+              ))}
+            </div>
 
-          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4">
-            {[
-              { name: 'E-commerce', icon: ShoppingCart, color: 'from-pink-400 to-rose-400' },
-              { name: 'Turism', icon: Umbrella, color: 'from-orange-400 to-amber-400' },
-              { name: 'Frumusețe și Sănătate', icon: Heart, color: 'from-rose-400 to-pink-500' },
-              { name: 'Cursuri', icon: Book, color: 'from-amber-400 to-yellow-400' },
-              { name: 'Loterii și Sloturi', icon: Ticket, color: 'from-green-400 to-emerald-400' },
-              { name: 'Donații', icon: Gift, color: 'from-emerald-400 to-teal-500' }
-            ].map((category, idx) => (
-              <button
-                key={idx}
-                className="group relative rounded-2xl p-6 transition-all duration-300 ease-out hover:scale-105 hover:-translate-y-1 active:scale-95 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-opacity-50 glass-card overflow-hidden"
-              >
-                <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500" style={{
-                  background: 'radial-gradient(circle at center, rgba(0, 174, 239, 0.1) 0%, transparent 70%)'
-                }} />
-                <div className="relative z-10">
-                  <div className={`w-12 h-12 mx-auto mb-3 rounded-xl flex items-center justify-center transition-all duration-300 group-hover:scale-110 group-hover:rotate-6 bg-gradient-to-br ${category.color}`}
-                    style={{
-                      boxShadow: '0 4px 12px rgba(0, 174, 239, 0.2)'
-                    }}>
-                    <category.icon className="w-6 h-6 text-white" />
-                  </div>
-                  <p className="text-xs font-medium text-center transition-colors duration-300 group-hover:text-blue-600" style={{ color: 'var(--text)', lineHeight: '1.4' }}>
-                    {category.name}
-                  </p>
+            {expandedCategory && (
+              <div className="glass-card rounded-2xl p-6 animate-in" style={{
+                background: 'linear-gradient(135deg, rgba(0, 174, 239, 0.08) 0%, rgba(0, 212, 255, 0.05) 100%)',
+                border: '1px solid rgba(0, 174, 239, 0.2)',
+                boxShadow: '0 8px 32px rgba(15, 23, 42, 0.08)'
+              }}>
+                <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4">
+                  {categories[expandedCategory]?.services.map((service, serviceIdx) => (
+                    <button
+                      key={serviceIdx}
+                      onClick={() => {
+                        navigate(`/service/${service.toLowerCase().replace(/\s+/g, '-')}`);
+                        setExpandedCategory(null);
+                      }}
+                      className="group relative rounded-2xl p-4 transition-all duration-300 ease-out hover:scale-105 hover:-translate-y-1 active:scale-95 glass-card overflow-hidden h-28 flex items-center justify-center"
+                      style={{
+                        background: 'white',
+                        border: '1px solid rgba(0, 174, 239, 0.1)'
+                      }}
+                    >
+                      <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500" style={{
+                        background: 'radial-gradient(circle at center, rgba(0, 174, 239, 0.1) 0%, transparent 70%)'
+                      }} />
+                      <span className="font-semibold text-sm text-center transition-colors duration-300 group-hover:text-blue-600 relative z-10" style={{ color: 'var(--text-strong)' }}>
+                        {service}
+                      </span>
+                    </button>
+                  ))}
                 </div>
-              </button>
-            ))}
+              </div>
+            )}
+
+            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4">
+              {[
+                { name: 'E-commerce', icon: ShoppingCart, color: 'from-pink-400 to-rose-400' },
+                { name: 'Turism', icon: Umbrella, color: 'from-orange-400 to-amber-400' },
+                { name: 'Frumusețe și Sănătate', icon: Heart, color: 'from-rose-400 to-pink-500' },
+                { name: 'Cursuri', icon: Book, color: 'from-amber-400 to-yellow-400' },
+                { name: 'Loterii și Sloturi', icon: Ticket, color: 'from-green-400 to-emerald-400' },
+                { name: 'Donații', icon: Gift, color: 'from-emerald-400 to-teal-500' }
+              ].map((category, idx) => (
+                <button
+                  key={idx}
+                  className="group relative rounded-2xl p-6 transition-all duration-300 ease-out hover:scale-105 hover:-translate-y-1 active:scale-95 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-opacity-50 glass-card overflow-hidden"
+                >
+                  <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500" style={{
+                    background: 'radial-gradient(circle at center, rgba(0, 174, 239, 0.1) 0%, transparent 70%)'
+                  }} />
+                  <div className="relative z-10">
+                    <div className={`w-12 h-12 mx-auto mb-3 rounded-xl flex items-center justify-center transition-all duration-300 group-hover:scale-110 group-hover:rotate-6 bg-gradient-to-br ${category.color}`}
+                      style={{
+                        boxShadow: '0 4px 12px rgba(0, 174, 239, 0.2)'
+                      }}>
+                      <category.icon className="w-6 h-6 text-white" />
+                    </div>
+                    <p className="text-xs font-medium text-center transition-colors duration-300 group-hover:text-blue-600" style={{ color: 'var(--text)', lineHeight: '1.4' }}>
+                      {category.name}
+                    </p>
+                  </div>
+                </button>
+              ))}
+            </div>
           </div>
         </section>
       </main>
