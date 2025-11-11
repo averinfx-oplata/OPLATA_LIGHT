@@ -1,10 +1,16 @@
-import { Search, User, Globe, CreditCard, Smartphone, Wifi, Monitor, Users, ShoppingCart, Umbrella, Heart, Book, Gift, Ticket, Sparkles, ChevronDown } from 'lucide-react';
+import { User, Globe, CreditCard, Smartphone, Wifi, Monitor, Users, ShoppingCart, Umbrella, Heart, Book, Gift, Ticket, Sparkles, ChevronDown, LogOut } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useState } from 'react';
 import CreditModal from '../components/CreditModal';
 import LoginModal from '../components/LoginModal';
 
-export default function Home() {
+interface HomeProps {
+  userEmail: string | null;
+  onLogin: (email: string) => void;
+  onLogout: () => void;
+}
+
+export default function Home({ userEmail, onLogin, onLogout }: HomeProps) {
   const navigate = useNavigate();
   const [showCategoryMenu, setShowCategoryMenu] = useState<string | null>(null);
   const [expandedCategory, setExpandedCategory] = useState<string | null>(null);
@@ -122,22 +128,54 @@ export default function Home() {
                 <Globe className="w-4 h-4" />
                 <span>Ro</span>
               </button>
-              <button
-                onClick={() => setShowLoginModal(true)}
-                className="flex items-center gap-2 px-6 h-10 rounded-xl font-medium transition-all duration-300 ease-out hover:scale-105 active:scale-95 shadow-lg hover:shadow-xl relative overflow-hidden group"
-                style={{
-                  background: 'var(--gradient-primary)',
-                  color: 'white',
-                  boxShadow: '0 4px 12px rgba(0, 174, 239, 0.3)'
-                }}>
-                <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300" style={{
-                  background: 'linear-gradient(45deg, transparent 30%, rgba(255,255,255,0.2) 50%, transparent 70%)',
-                  backgroundSize: '200% 200%',
-                  animation: 'shimmer 2s infinite'
-                }} />
-                <User className="w-4 h-4 relative z-10" />
-                <span className="relative z-10">Login</span>
-              </button>
+              {userEmail ? (
+                <div className="flex items-center gap-2">
+                  <button
+                    onClick={() => navigate('/cabinet')}
+                    className="flex items-center gap-2 px-6 h-10 rounded-xl font-medium transition-all duration-300 ease-out hover:scale-105 active:scale-95 shadow-lg hover:shadow-xl relative overflow-hidden group"
+                    style={{
+                      background: 'var(--gradient-primary)',
+                      color: 'white',
+                      boxShadow: '0 4px 12px rgba(0, 174, 239, 0.3)'
+                    }}>
+                    <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300" style={{
+                      background: 'linear-gradient(45deg, transparent 30%, rgba(255,255,255,0.2) 50%, transparent 70%)',
+                      backgroundSize: '200% 200%',
+                      animation: 'shimmer 2s infinite'
+                    }} />
+                    <User className="w-4 h-4 relative z-10" />
+                    <span className="relative z-10">Cabinet</span>
+                  </button>
+                  <button
+                    onClick={onLogout}
+                    className="flex items-center gap-2 px-4 h-10 rounded-xl border-2 transition-all duration-300 ease-out hover:scale-105 active:scale-95"
+                    style={{
+                      background: 'white',
+                      color: 'var(--color-primary)',
+                      borderColor: 'var(--color-primary)'
+                    }}>
+                    <LogOut className="w-4 h-4" />
+                    <span>Logout</span>
+                  </button>
+                </div>
+              ) : (
+                <button
+                  onClick={() => setShowLoginModal(true)}
+                  className="flex items-center gap-2 px-6 h-10 rounded-xl font-medium transition-all duration-300 ease-out hover:scale-105 active:scale-95 shadow-lg hover:shadow-xl relative overflow-hidden group"
+                  style={{
+                    background: 'var(--gradient-primary)',
+                    color: 'white',
+                    boxShadow: '0 4px 12px rgba(0, 174, 239, 0.3)'
+                  }}>
+                  <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300" style={{
+                    background: 'linear-gradient(45deg, transparent 30%, rgba(255,255,255,0.2) 50%, transparent 70%)',
+                    backgroundSize: '200% 200%',
+                    animation: 'shimmer 2s infinite'
+                  }} />
+                  <User className="w-4 h-4 relative z-10" />
+                  <span className="relative z-10">Login</span>
+                </button>
+              )}
             </div>
           </div>
         </div>
@@ -434,7 +472,7 @@ export default function Home() {
       </main>
 
       <CreditModal isOpen={showCreditModal} onClose={() => setShowCreditModal(false)} />
-      <LoginModal isOpen={showLoginModal} onClose={() => setShowLoginModal(false)} />
+      <LoginModal isOpen={showLoginModal} onClose={() => setShowLoginModal(false)} onLogin={onLogin} />
 
       <footer className="border-t mt-16 relative" style={{ borderColor: 'rgba(255, 255, 255, 0.5)' }}>
         <div className="absolute inset-0 backdrop-blur-xl bg-white/60" />
