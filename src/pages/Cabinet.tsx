@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import { Globe, LogOut, History, Settings, ShoppingCart, CreditCard, Trash2 } from 'lucide-react';
+import { Globe, LogOut, History, Settings, ShoppingCart, CreditCard, Trash2, ChevronDown, Download, Repeat2, Calendar } from 'lucide-react';
 import { useState } from 'react';
 
 interface CabinetProps {
@@ -11,6 +11,11 @@ type TabType = 'history' | 'account' | 'cart' | 'cards';
 
 export default function Cabinet({ email, onLogout }: CabinetProps) {
   const [activeTab, setActiveTab] = useState<TabType>('history');
+  const [expandedTx, setExpandedTx] = useState<number | null>(1);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage, setItemsPerPage] = useState(10);
+  const [selectedPeriod, setSelectedPeriod] = useState('1luna');
+
   const [cartItems, setCartItems] = useState([
     { id: 1, service: 'Premier Energy', amount: 100, date: '2024-01-15' },
     { id: 2, service: 'Moldcel', amount: 50, date: '2024-01-14' },
@@ -21,6 +26,29 @@ export default function Cabinet({ email, onLogout }: CabinetProps) {
     { id: 2, number: '4532****9876', holder: 'Alexandru Pobusan', expiry: '08/25', type: 'visa', last4: '9876' },
     { id: 3, number: '3782****4567', holder: 'Alexandru Pobusan', expiry: '11/27', type: 'amex', last4: '4567' }
   ]);
+
+  const allTransactions = [
+    { id: 1, service: 'Premier Energy', amount: 10, date: '2024-11-27 16:31', account: '2035377', status: 'Succes', invoice: '11765069' },
+    { id: 2, service: 'Premier Energy', amount: 10, date: '2024-11-26 14:22', account: '2035377', status: 'Succes', invoice: '11765068' },
+    { id: 3, service: 'Premier Energy', amount: 10, date: '2024-11-25 10:15', account: '2035377', status: 'Succes', invoice: '11765067' },
+    { id: 4, service: 'Premier Energy', amount: 10, date: '2024-11-24 09:45', account: '2035377', status: 'Succes', invoice: '11765066' },
+    { id: 5, service: 'Stroy Master', amount: 202.60, date: '2024-11-23 13:30', account: '1043047', status: 'Succes', invoice: '11765065' },
+    { id: 6, service: 'Moldcel', amount: 123.60, date: '2024-11-22 11:20', account: '69052401', status: 'Succes', invoice: '11765064' },
+    { id: 7, service: 'Moldtelecom', amount: 23, date: '2024-11-21 15:45', account: '37367444565', status: 'Succes', invoice: '11765063' },
+    { id: 8, service: 'Premier Energy', amount: 10, date: '2024-11-20 08:50', account: '2035377', status: 'Succes', invoice: '11765062' },
+    { id: 9, service: 'Штрафи полиция', amount: 450, date: '2024-11-19 12:00', account: '24940035200765555', status: 'Succes', invoice: '11765061' },
+    { id: 10, service: 'Moldcel', amount: 75, date: '2024-11-18 16:30', account: '69052401', status: 'Succes', invoice: '11765060' },
+    { id: 11, service: 'Orange Moldova', amount: 85, date: '2024-11-17 14:20', account: '201547894', status: 'Succes', invoice: '11765059' },
+    { id: 12, service: 'Premier Energy', amount: 150, date: '2024-11-16 10:10', account: '2035377', status: 'Succes', invoice: '11765058' },
+    { id: 13, service: 'Vodafone', amount: 99, date: '2024-11-15 09:30', account: '560123456', status: 'Succes', invoice: '11765057' },
+    { id: 14, service: 'Electric', amount: 200, date: '2024-11-14 11:15', account: '789456123', status: 'Succes', invoice: '11765056' },
+    { id: 15, service: 'Water Supply', amount: 85, date: '2024-11-13 13:45', account: '456789123', status: 'Succes', invoice: '11765055' },
+    { id: 16, service: 'Gas Supply', amount: 125, date: '2024-11-12 15:20', account: '123789456', status: 'Succes', invoice: '11765054' },
+    { id: 17, service: 'Internet', amount: 199, date: '2024-11-11 10:50', account: '987654321', status: 'Succes', invoice: '11765053' },
+    { id: 18, service: 'Cable TV', amount: 149, date: '2024-11-10 14:30', account: '321987654', status: 'Succes', invoice: '11765052' },
+    { id: 19, service: 'Telephone', amount: 45, date: '2024-11-09 16:00', account: '654321987', status: 'Succes', invoice: '11765051' },
+    { id: 20, service: 'Heating', amount: 320, date: '2024-11-08 12:15', account: '789123456', status: 'Succes', invoice: '11765050' }
+  ];
 
   const menuItems = [
     { id: 'history', label: 'Istoricul tranzacțiilor', icon: History },
@@ -37,18 +65,26 @@ export default function Cabinet({ email, onLogout }: CabinetProps) {
     setCards(cards.filter(card => card.id !== id));
   };
 
-  const transactions = [
-    { id: 1, service: 'Premier Energy', amount: '100', date: '2024-01-15', status: 'Achitat' },
-    { id: 2, service: 'Premier Energy', amount: '150', date: '2024-01-14', status: 'Achitat' },
-    { id: 3, service: 'Premier Energy', amount: '200', date: '2024-01-13', status: 'Achitat' },
-    { id: 4, service: 'Moldcel', amount: '50', date: '2024-01-12', status: 'Achitat' },
-    { id: 5, service: 'Moldcel', amount: '75', date: '2024-01-11', status: 'Achitat' },
-    { id: 6, service: 'Moldcel', amount: '60', date: '2024-01-10', status: 'Achitat' }
-  ];
+  const totalTransactions = allTransactions.length;
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const paginatedTransactions = allTransactions.slice(startIndex, startIndex + itemsPerPage);
+  const totalPages = Math.ceil(totalTransactions / itemsPerPage);
 
   const getServiceColor = (service: string) => {
     if (service.includes('Premier')) return '#2563EB';
     if (service.includes('Moldcel')) return '#A855F7';
+    if (service.includes('Stroy')) return '#00AEEF';
+    if (service.includes('Vodafone')) return '#E60000';
+    if (service.includes('Orange')) return '#FF7900';
+    if (service.includes('Electric')) return '#FDB913';
+    if (service.includes('Water')) return '#4A90E2';
+    if (service.includes('Gas')) return '#F39C12';
+    if (service.includes('Internet')) return '#3498DB';
+    if (service.includes('Cable')) return '#9B59B6';
+    if (service.includes('Telephone')) return '#1ABC9C';
+    if (service.includes('Heating')) return '#E74C3C';
+    if (service.includes('Штрафи') || service.includes('полиция')) return '#C0392B';
+    if (service.includes('Moldtelecom')) return '#34495E';
     return '#00AEEF';
   };
 
@@ -159,45 +195,206 @@ export default function Cabinet({ email, onLogout }: CabinetProps) {
                 border: '1px solid rgba(0, 174, 239, 0.1)',
                 boxShadow: '0 8px 32px rgba(15, 23, 42, 0.08)'
               }}>
-                <h2 className="text-2xl font-bold mb-2" style={{ color: 'var(--text-strong)' }}>
-                  Istoricul plătilor
-                </h2>
-                <p className="mb-6" style={{ color: 'var(--text-muted)' }}>
-                  Din acest meniu poți vedea istoricul tuturor tranzacțiilor tale
-                </p>
+                <div className="mb-8">
+                  <h2 className="text-2xl font-bold mb-2" style={{ color: 'var(--text-strong)' }}>
+                    Istoricul plătilor
+                  </h2>
+                  <p className="mb-6" style={{ color: 'var(--text-muted)' }}>
+                    Din acest meniu poți vedea istoricul tuturor tranzacțiilor tale, descarca facturi și repeta plăți.
+                  </p>
 
-                <div className="space-y-3">
-                  {transactions.map((tx) => (
+                  <div className="flex flex-wrap gap-3 items-center mb-6 pb-6 border-b" style={{ borderColor: 'rgba(0, 174, 239, 0.2)' }}>
+                    <button
+                      onClick={() => setSelectedPeriod('1sapt')}
+                      className={`px-4 py-2 rounded-lg text-sm font-medium transition-all duration-300 ${
+                        selectedPeriod === '1sapt'
+                          ? 'text-white'
+                          : 'text-gray-600 hover:text-gray-800'
+                      }`}
+                      style={{
+                        background: selectedPeriod === '1sapt' ? 'var(--gradient-primary)' : 'transparent'
+                      }}
+                    >
+                      1 săptămână
+                    </button>
+                    <button
+                      onClick={() => setSelectedPeriod('1luna')}
+                      className={`px-4 py-2 rounded-lg text-sm font-medium transition-all duration-300 ${
+                        selectedPeriod === '1luna'
+                          ? 'text-white'
+                          : 'text-gray-600 hover:text-gray-800'
+                      }`}
+                      style={{
+                        background: selectedPeriod === '1luna' ? 'var(--gradient-primary)' : 'transparent'
+                      }}
+                    >
+                      1 lună
+                    </button>
+                    <button
+                      onClick={() => setSelectedPeriod('3luni')}
+                      className={`px-4 py-2 rounded-lg text-sm font-medium transition-all duration-300 ${
+                        selectedPeriod === '3luni'
+                          ? 'text-white'
+                          : 'text-gray-600 hover:text-gray-800'
+                      }`}
+                      style={{
+                        background: selectedPeriod === '3luni' ? 'var(--gradient-primary)' : 'transparent'
+                      }}
+                    >
+                      3 luni
+                    </button>
+                    <button className="p-2 rounded-lg border flex items-center gap-2 hover:bg-gray-50 transition-colors"
+                      style={{ borderColor: 'rgba(0, 174, 239, 0.2)', color: 'var(--text-muted)' }}>
+                      <Calendar className="w-4 h-4" />
+                      <span className="text-sm">noiembrie 3 2025 - decembrie 4 2025</span>
+                    </button>
+                  </div>
+                </div>
+
+                <div className="space-y-4">
+                  {paginatedTransactions.map((tx) => (
                     <div
                       key={tx.id}
-                      className="flex items-center gap-4 p-4 rounded-xl transition-all duration-300 hover:bg-gray-50"
+                      className="rounded-xl overflow-hidden transition-all duration-300"
                       style={{
                         background: 'rgba(0, 174, 239, 0.02)',
                         border: '1px solid rgba(0, 174, 239, 0.1)'
                       }}
                     >
-                      <div
-                        className="w-12 h-12 rounded-xl flex items-center justify-center text-white font-semibold flex-shrink-0"
-                        style={{ background: getServiceColor(tx.service) }}
+                      <button
+                        onClick={() => setExpandedTx(expandedTx === tx.id ? null : tx.id)}
+                        className="w-full flex items-center gap-4 p-4 hover:bg-gray-50 transition-colors"
                       >
-                        {getServiceLetter(tx.service)}
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <h3 className="font-semibold text-sm" style={{ color: 'var(--text-strong)' }}>
-                          {tx.service}
-                        </h3>
-                        <p className="text-xs" style={{ color: 'var(--text-muted)' }}>
-                          {tx.date}
-                        </p>
-                      </div>
-                      <div className="text-right flex-shrink-0">
-                        <div className="font-semibold" style={{ color: 'var(--text-strong)' }}>
-                          {tx.amount} MDL
+                        <div
+                          className="w-14 h-14 rounded-xl flex items-center justify-center text-white font-semibold flex-shrink-0"
+                          style={{ background: getServiceColor(tx.service) }}
+                        >
+                          {getServiceLetter(tx.service)}
                         </div>
-                        <div className="text-xs text-green-600">{tx.status}</div>
-                      </div>
+                        <div className="flex-1 text-left min-w-0">
+                          <h3 className="font-semibold" style={{ color: 'var(--text-strong)' }}>
+                            {tx.service}
+                          </h3>
+                          <p className="text-sm" style={{ color: 'var(--text-muted)' }}>
+                            {tx.date}
+                          </p>
+                        </div>
+                        <div className="text-right flex-shrink-0">
+                          <div className="font-bold text-lg" style={{ color: 'var(--text-strong)' }}>
+                            {tx.amount.toFixed(2)} MDL
+                          </div>
+                          <div className="text-sm text-green-600 font-medium">{tx.status}</div>
+                        </div>
+                        <ChevronDown
+                          className="w-5 h-5 flex-shrink-0 transition-transform"
+                          style={{
+                            color: 'var(--text-muted)',
+                            transform: expandedTx === tx.id ? 'rotate(180deg)' : 'rotate(0deg)'
+                          }}
+                        />
+                      </button>
+
+                      {expandedTx === tx.id && (
+                        <div className="px-4 pb-4 pt-2" style={{ background: 'rgba(0, 174, 239, 0.05)' }}>
+                          <div className="grid grid-cols-2 gap-4 mb-4 pb-4 border-b" style={{ borderColor: 'rgba(0, 174, 239, 0.1)' }}>
+                            <div>
+                              <p className="text-xs" style={{ color: 'var(--text-muted)' }}>Conta</p>
+                              <p className="font-mono font-semibold text-sm" style={{ color: 'var(--text-strong)' }}>
+                                {tx.account}
+                              </p>
+                            </div>
+                            <div>
+                              <p className="text-xs" style={{ color: 'var(--text-muted)' }}>Detalii</p>
+                              <p className="font-mono font-semibold text-sm" style={{ color: 'var(--text-strong)' }}>
+                                {tx.invoice}
+                              </p>
+                            </div>
+                          </div>
+                          <div className="flex gap-3">
+                            <button className="flex-1 flex items-center justify-center gap-2 px-4 py-3 rounded-lg font-medium transition-all duration-300 ease-out hover:scale-105 active:scale-95"
+                              style={{
+                                background: 'var(--gradient-primary)',
+                                color: 'white',
+                                boxShadow: '0 4px 12px rgba(0, 174, 239, 0.3)'
+                              }}>
+                              <Download className="w-4 h-4" />
+                              <span>Descarcă factura</span>
+                            </button>
+                            <button className="flex-1 flex items-center justify-center gap-2 px-4 py-3 rounded-lg font-medium border-2 transition-all duration-300 ease-out hover:scale-105 active:scale-95"
+                              style={{
+                                background: 'white',
+                                color: 'var(--color-primary)',
+                                borderColor: 'var(--color-primary)'
+                              }}>
+                              <Repeat2 className="w-4 h-4" />
+                              <span>Plătește din nou</span>
+                            </button>
+                          </div>
+                        </div>
+                      )}
                     </div>
                   ))}
+                </div>
+
+                <div className="mt-8 pt-6 border-t flex flex-col sm:flex-row items-center justify-between gap-4" style={{ borderColor: 'rgba(0, 174, 239, 0.2)' }}>
+                  <div style={{ color: 'var(--text-muted)' }}>
+                    <span>Total: <span className="font-semibold" style={{ color: 'var(--text-strong)' }}>{totalTransactions}</span></span>
+                  </div>
+
+                  <div className="flex items-center gap-4">
+                    <button
+                      onClick={() => setCurrentPage(Math.max(1, currentPage - 1))}
+                      disabled={currentPage === 1}
+                      className="px-3 py-2 rounded-lg border transition-all duration-300 disabled:opacity-50"
+                      style={{ borderColor: 'rgba(0, 174, 239, 0.2)' }}
+                    >
+                      ←
+                    </button>
+                    <div className="flex gap-1">
+                      {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+                        <button
+                          key={page}
+                          onClick={() => setCurrentPage(page)}
+                          className={`w-8 h-8 rounded-lg font-medium transition-all duration-300 ${
+                            page === currentPage
+                              ? 'text-white'
+                              : 'text-gray-600 hover:bg-gray-100'
+                          }`}
+                          style={{
+                            background: page === currentPage ? 'var(--gradient-primary)' : 'transparent'
+                          }}
+                        >
+                          {page}
+                        </button>
+                      ))}
+                    </div>
+                    <button
+                      onClick={() => setCurrentPage(Math.min(totalPages, currentPage + 1))}
+                      disabled={currentPage === totalPages}
+                      className="px-3 py-2 rounded-lg border transition-all duration-300 disabled:opacity-50"
+                      style={{ borderColor: 'rgba(0, 174, 239, 0.2)' }}
+                    >
+                      →
+                    </button>
+                  </div>
+
+                  <div className="flex items-center gap-2">
+                    <span style={{ color: 'var(--text-muted)' }}>Itemi pe pagină:</span>
+                    <select
+                      value={itemsPerPage}
+                      onChange={(e) => {
+                        setItemsPerPage(Number(e.target.value));
+                        setCurrentPage(1);
+                      }}
+                      className="px-3 py-2 rounded-lg border"
+                      style={{ borderColor: 'rgba(0, 174, 239, 0.2)', color: 'var(--text-strong)' }}
+                    >
+                      <option value={5}>5</option>
+                      <option value={10}>10</option>
+                      <option value={20}>20</option>
+                      <option value={50}>50</option>
+                    </select>
+                  </div>
                 </div>
               </div>
             )}
